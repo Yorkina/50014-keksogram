@@ -65,7 +65,7 @@
   //  });
 
 
-  //находим минимальное значение отступа, если есть отступ слева
+  //находим максимальное значение отступа, если есть отступ слева
   leftSize.addEventListener ('change', function(evt) {
     evt.preventDefault();
     if (leftSize > squareSize.max ){
@@ -76,7 +76,7 @@
     console.log (squareSize.max);
   });
 
-  //находим минимальное значение отступа, если есть отступ сверху
+  //находим максимальное значение отступа, если есть отступ сверху
   topSize.addEventListener ('change', function(evt) {
     evt.preventDefault();
     if (topSize > squareSize.max ){
