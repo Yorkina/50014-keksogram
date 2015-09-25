@@ -45,7 +45,14 @@
   //получаем размеры каринки после загрузки
     imgHeight = this.clientHeight;
     imgWidth = this.clientWidth;
-    console.log(imgWidth + " и " + imgHeight);
+
+  //находим минимальное значение стороны квадрата
+      if (imgHeight >= imgWidth) {
+        squareSize.max = (imgWidth - leftSize.value);
+      } else {
+        squareSize.max = (imgHeight - topSize.value);
+      }
+    console.log(imgWidth + " и " + imgHeight + " макс: " + squareSize.max );
   });
 
   //трем ввод отрицательных значений
@@ -57,20 +64,10 @@
   //    this.value ="";
   //  });
 
-  //находим минимальное значение стороны квадрата
-  var getMaxSide = function() {
-    if (imgHeight >= imgWidth) {
-      squareSize.max = (imgWidth - leftSize.value);
-    } else {
-      squareSize.max = (imgHeight - topSize.value);
-    }
-    console.log (squareSize.max);
-  };
 
-  //находим минимальное значение стороны если есть отступ слева
+  //находим минимальное значение отступа, если есть отступ слева
   leftSize.addEventListener ('change', function(evt) {
     evt.preventDefault();
-    getMaxSide();
     if (leftSize > squareSize.max ){
       leftSize.max = (imgWidth - squareSize.max);
     } else {
@@ -79,10 +76,9 @@
     console.log (squareSize.max);
   });
 
-  //находим минимальное значение стороны если есть отступ сверху
+  //находим минимальное значение отступа, если есть отступ сверху
   topSize.addEventListener ('change', function(evt) {
     evt.preventDefault();
-    getMaxSide();
     if (topSize > squareSize.max ){
       topSize.max = (imgHeight - squareSize.max);
     } else {
