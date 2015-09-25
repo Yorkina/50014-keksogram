@@ -68,7 +68,7 @@
   //находим максимальное значение отступа, если есть отступ слева
   leftSize.addEventListener ('change', function(evt) {
     evt.preventDefault();
-    if (leftSize > squareSize.max ){
+    if (leftSize >= squareSize.max ){
       leftSize.max = (imgWidth - squareSize.max);
     } else {
       leftSize.max = 0;
@@ -79,7 +79,7 @@
   //находим максимальное значение отступа, если есть отступ сверху
   topSize.addEventListener ('change', function(evt) {
     evt.preventDefault();
-    if (topSize > squareSize.max ){
+    if (topSize >= squareSize.max ){
       topSize.max = (imgHeight - squareSize.max);
     } else {
       topSize.max = 0;
@@ -90,7 +90,7 @@
   //пересчитваем поля отступов, если ввели вручную размер и хотим с ним жить
   squareSize.addEventListener ('change', function(evt) {
     evt.preventDefault();
-    if (squareSize.max > 0){
+    if (squareSize.max > 1){
       topSize.max = (imgHeight - squareSize.value);
       leftSize.max = (imgWidth - squareSize.value);
     } 
