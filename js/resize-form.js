@@ -22,52 +22,33 @@
     resizeForm.classList.add('invisible');
     filterForm.classList.remove('invisible');
   };
-})();
 
 
-
-
-
-  //код мой
+    //код мой
 
   var squareSize = document.getElementById('resize-size');
   var leftSize = document.getElementById('resize-x');
   var topSize = document.getElementById('resize-y');
-  var previewImage = document.querySelector('.resize-image-preview')
+  var previewImage = document.querySelector('.resize-image-preview');
 
-  var imgHeight = 0;
-  var imgWidth = 0;
+  var imgHeight = 0, imgWidth = 0;
 
   //считываем факт загрузки картинки
   previewImage.addEventListener('load', function(evt) {
-    evt.preventDefault();
 
   //получаем размеры каринки после загрузки
     imgHeight = this.clientHeight;
     imgWidth = this.clientWidth;
 
-  //находим минимальное значение стороны квадрата
-      if (imgHeight >= imgWidth) {
-        squareSize.max = (imgWidth - leftSize.value);
-      } else {
-        squareSize.max = (imgHeight - topSize.value);
-      }
+  //находим максимальное значение стороны квадрата
+
+    squareSize.max = Math.min(imgWidth, imgHeight);
     console.log(imgWidth + " и " + imgHeight + " макс: " + squareSize.max );
   });
 
-  //трем ввод отрицательных значений
-  //  squareSize.addEventListener ('change', function(evt) {
-  //  evt.preventDefault();
-  //  if (this.value >= 1) {
-  //    cropSize = this.value;
-  //  } else {
-  //    this.value ="";
-  //  });
-
-
   //находим максимальное значение отступа, если есть отступ слева
   leftSize.addEventListener ('change', function(evt) {
-    evt.preventDefault();
+
     if (leftSize >= squareSize.max ){
       leftSize.max = (imgWidth - squareSize.max);
     } else {
@@ -78,7 +59,7 @@
 
   //находим максимальное значение отступа, если есть отступ сверху
   topSize.addEventListener ('change', function(evt) {
-    evt.preventDefault();
+
     if (topSize >= squareSize.max ){
       topSize.max = (imgHeight - squareSize.max);
     } else {
@@ -89,13 +70,20 @@
 
   //пересчитваем поля отступов, если ввели вручную размер и хотим с ним жить
   squareSize.addEventListener ('change', function(evt) {
-    evt.preventDefault();
+
     if (squareSize.max > 1){
       topSize.max = (imgHeight - squareSize.value);
       leftSize.max = (imgWidth - squareSize.value);
     } 
     console.log (squareSize.max);
   });
+})();
+
+
+
+
+
+
 
 
 
