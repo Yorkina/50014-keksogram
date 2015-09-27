@@ -35,12 +35,29 @@
     resizeForm.classList.remove('invisible');
   };
 
-  filterForm.onsubmit = function() {
+
+  //ПЕЧЕНЬКИ 
+
+
+  filterForm.addEventListener('submit', function(evt) {
+    console.log("test1");
     evt.preventDefault();
 
+    docCookies.setItem('upload-filter', selectedFilter.value);
     uploadForm.classList.remove('invisible');
     filterForm.classList.add('invisible');
-  }
 
+  });
   setFilter();
+
+
+  var restoreCookies = function(form) {
+    var element;
+    console.log("test0");
+
+    if (docCookies.hasItem('upload-filter')) {
+      selectedFilter.value = docCookies.getItem('upload-filter');
+    }
+  };
+  restoreCookies(filterForm);
 })();

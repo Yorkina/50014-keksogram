@@ -79,4 +79,12 @@
     } 
     console.log (squareSize.max);
   });
+
 })();
+
+
+
+
+
+
+
