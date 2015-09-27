@@ -39,9 +39,12 @@
 
   //получаем размеры каринки после загрузки
     imgWidth = this.clientWidth;
-    console.info('imgWidth', imgWidth);
     imgHeight = this.clientHeight;
-    console.info('imgHeight', imgHeight);
+
+  //обнуляем форму
+    leftSize.value = 0;
+    topSize.value = 0;
+    squareSize.value = Math.min(imgWidth, imgHeight);
 
   //находим максимальное значение стороны квадрата
 
