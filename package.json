@@ -1,0 +1,25 @@
+{
+  "name": "50014-keksogram",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Обучающий проект «keksogram» от HTML Academy",
+  "author": "Наталья Ёркина",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/js-htmlacademy/50014-keksogram.git"
+  },
+  "bugs": {
+    "url": "https://github.com/js-htmlacademy/50014-keksogram/issues"
+  },
+  "homepage": "https://github.com/js-htmlacademy/50014-keksogram",
+  "devDependencies": {
+    "eslint": "1.5.1"
+  },
+  "scripts": {
+    "gosha": "make",
+    "test": "eslint js/"
+  },
+  "engines": {
+    "node": "^0.12.7"
+  }
+}
