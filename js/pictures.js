@@ -69,6 +69,7 @@
     var xhr = new XMLHttpRequest();
     xhr.timeout = IMAGE_FAILURE_TIMEOUT;
     xhr.open('get', 'data/pictures.json');
+    picContainer.classList.add('pictures-loading');
     xhr.send();
 
     xhr.onreadystatechange = function(evt) {
@@ -78,14 +79,13 @@
         case ReadyState.OPENED:
         case ReadyState.HEADERS_RECEIVED:
         case ReadyState.LOADING:
-          picContainer.classList.add('pictures-loading');
           break;
 
         case ReadyState.DONE:
         default:
+          picContainer.classList.remove('pictures-loading');
           if (xhr.status == 200) {
             var data = loadedXhr.response;
-            picContainer.classList.remove('pictures-loading');
             callback(JSON.parse(data));
           }
           if (loadedXhr.status >= 400) {
