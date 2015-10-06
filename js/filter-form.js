@@ -40,7 +40,6 @@
 
 
   filterForm.addEventListener('submit', function(evt) {
-    console.log("test1");
     evt.preventDefault();
 
     docCookies.setItem('upload-filter', selectedFilter.value);
@@ -53,7 +52,6 @@
 
   var restoreCookies = function(form) {
     var element;
-    console.log("test0");
 
     if (docCookies.hasItem('upload-filter')) {
       selectedFilter.value = docCookies.getItem('upload-filter');
