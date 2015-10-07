@@ -1,3 +1,4 @@
+
 (function() {
 
   var ReadyState = {
@@ -7,7 +8,6 @@
     'LOADING': 3,
     'DONE': 4
   };
-
 
   var filtersContainer = document.querySelector(".filters");
   var picContainer = document.querySelector(".pictures");

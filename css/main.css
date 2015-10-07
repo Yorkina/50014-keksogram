@@ -28,6 +28,8 @@ body {
 .filters {
   text-align: center;
   padding: 15px 0;
+  width: 400px;
+  margin: 0 auto;
 }
 
 .filters-item {
@@ -358,6 +360,7 @@ input[type=radio]:checked + .upload-filter-label {
 @media (min-width: 1380px) {
   .pictures {
     width: 1380px;
+    padding-bottom: 100px;
   }
 
   .picture:nth-of-type(2n-1):nth-of-type(-n+6) {
