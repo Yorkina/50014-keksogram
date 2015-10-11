@@ -11,6 +11,8 @@
 
   var filtersContainer = document.querySelector(".filters");
   var picContainer = document.querySelector(".pictures");
+  var picTemplate = document.querySelector(".picture-template");
+  var picFragment = document.createDocumentFragment();
 
   var IMAGE_FAILURE_TIMEOUT = 10000;
   var PAGE_SIZE = 12;
@@ -42,22 +44,17 @@
       picContainer.classList.remove('picture-load-failure');
       picContainer.innerHTML = '';
     }
-    var picTemplate = document.querySelector(".picture-template");
-    var picFragment = document.createDocumentFragment();
 
     var picFrom = pageNumber * PAGE_SIZE;
     var picTo = picFrom + PAGE_SIZE;
     picToRender = picToRender.slice(picFrom, picTo);
 
-    picToRender.forEach(function(pictures) {
+    picToRender.forEach(function(photoData) {
 
-      var newPicElement = picTemplate.content.children[0].cloneNode(true);
+      var newPicElement = new Photo(photoData);
+      newPicElement.render(picFragment);
 
-      newPicElement.querySelector(".picture img");
-      newPicElement.querySelector(".picture-comments").textContent = pictures['comments'];
-      newPicElement.querySelector(".picture-likes").textContent = pictures['likes'];
-
-      picFragment.appendChild(newPicElement);
+      picContainer.appendChild(picFragment);
 
 
       if (pictures['url']) {
@@ -158,11 +155,22 @@
         break;
 
       case 'popular':
+      filteredPic = filteredPic.sort(function(a, b) {
 
-      default:
-        filteredPic = picturesToFilter.slice(0);
+          if (a.likes > b.likes) {
+            return -1;
+          }
+
+          if (a.likes === b.likes) {
+            return 0;
+          }
+
+          if (a.likes < b.likes) {
+            return 1;
+          }
+        });
         break;
-    }
+      }
     localStorage.setItem('filterValue', filterValue);
     return filteredPic;
   };
@@ -180,7 +188,7 @@
   };
   //функция установки фильтра
   function setActiveFilter(filterValue) {
-    //перезаписываем список отелей которые у нас есть
+    //перезаписываем список картинок которые у нас есть
     currentPictures = filterPic(pictures, filterValue);
     currentPage = 0;
     renderPictures(currentPictures, currentPage, true);
