@@ -49,6 +49,7 @@
     var picTo = picFrom + PAGE_SIZE;
     picToRender = picToRender.slice(picFrom, picTo);
 
+
     picToRender.forEach(function(photoData) {
 
       var newPicElement = new Photo(photoData);
@@ -191,7 +192,7 @@
     //перезаписываем список картинок которые у нас есть
     currentPictures = filterPic(pictures, filterValue);
     currentPage = 0;
-    renderPictures(currentPictures, currentPage, true);
+    renderPictures(currentPictures, currentPage++, true);
   };
 
   //КОД ДЛЯ СКРОЛЛА
