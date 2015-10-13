@@ -5,59 +5,69 @@
     'RIGHT': 39
   };
 
-  var pictureContainer = document.querySelector(".pictures");
-  var galleryElement = document.querySelector(".gallery-overlay");
-  var closeButton = galleryElement.querySelector(".gallery-overlay-close");
-
-  function doesHaveParent(element, className) {
-    //ползем по дому через parentElement и ищем, не тут ли кликнутый элемент
-    do {
-      if (element.classList.contains(className)) {
-        return !element.classList.contains('picture-load-failure');
-      }
-      element = element.parentElement;
-    } while (element);
-
-    return false;
+  function clamp(value, min, max) {
+    return Math.min(Math.max(value, min), max);
   };
 
-  function hideGallery() {
-    galleryElement.classList.add('invisible');
-    closeButton.removeEventListener('click', closeHandler);
-    document.body.removeEventListener('keydown', keyHandler);
+  var Gallery = function() {
+    this._element = document.querySelector(".gallery-overlay");
+    this._closeButton = this._element.querySelector(".gallery-overlay-close");
+    this._pictureElement = this._element.querySelector(".gallery-overlay-preview");
+    this._currentPhoto = 0;
+    this._photos = [];
   };
 
-  function closeHandler(evt) {
-    evt.preventDefault();
-    hideGallery();
+  Gallery.prototype.show = function() {
+    //if(!this._eventsNormalized) {
+      //this._onCloseClick = this._onCloseClick.bind(this);
+      //this._onKeyDown = this._onKeyDown.bind(this)
+    //}
+
+    this._element.classList.remove('invisible');
+    this._closeButton.addEventListener('click', this._onCloseClick);
+    document.body.addEventListener('keydown', this._onKeyDown);
+    this._showCurrentPhoto();
   };
 
-  function keyHandler(evt) {
-    switch (evt.keyCode) {
-      case Key.LEFT:
-        console.log('показываем предыдущее фото');
-        break;
-      case Key.RIGHT:
-        console.log('показываем следующее фото');
-        break;
-      case Key.ESC:
-        hideGallery();
-        break;
+  Gallery.prototype.hide = function() {
+
+    this._element.classList.add('invisible');
+    this._closeButton.removeEventListener('click', this._onCloseClick);
+    document.body.removeEventListener('keydown', this._onKeyDown);
+
+    this._photos = [];
+    this._currentPhoto = 0;
+  };
+
+  Gallery.prototype.setPhotos = function(photos) {
+    this._photos = photos;
+    alert(this._photos + "setPhotos");
+  };
+
+  Gallery.prototype.setCurrentPhoto = function(index) {
+    index = clamp(index, 0, this._photos.length - 1);
+
+    if(this._currentPhoto === index) {
+      return;
     }
+
+    this._currentPhoto = index;
+    alert(this._currentPhoto + "setCurrentPhoto");
+    this._showCurrentPhoto();
   };
 
-  function showGallery() {
-    galleryElement.classList.remove('invisible');
-    closeButton.addEventListener('click', closeHandler);
-    document.body.addEventListener('keydown', keyHandler);
-  }
+  Gallery.prototype._showCurrentPhoto = function() {
+    this._pictureElement.innerHTML = '';
 
-  //по клику проверяем, есть ли класс у контейнера картинки
-  pictureContainer.addEventListener('click', function(evt) {
-    evt.preventDefault();
-    if (doesHaveParent(evt.target, 'picture')) {
-      showGallery();
-    }
-  });
+    var imageElement = new Image();
+    imageElement.src = this._photos[this._currentPhoto];
+
+    imageElement.onload = function() {
+      this._pictureElement.appendChild(imageElement);
+    }.bind(this);
+  };
+
+
+  window.Gallery = Gallery;
 
 })();

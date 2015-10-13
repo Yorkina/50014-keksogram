@@ -17,9 +17,9 @@
   var IMAGE_FAILURE_TIMEOUT = 10000;
   var PAGE_SIZE = 12;
 
-  var pictures;
+  var gallery = new Gallery();
   var currentPictures;
-  var currentPage;
+  var currentPage = 0;
 
   filtersContainer.classList.add('hidden');
 
@@ -156,6 +156,7 @@
         break;
 
       case 'popular':
+      default:
       filteredPic = filteredPic.sort(function(a, b) {
 
           if (a.likes > b.likes) {
@@ -223,15 +224,25 @@
       someTimeout = setTimeout(checkNextPage, 100);
     });
 
-    //отрисовка отелей по событию из ф-ии checkNextPage
-    window.addEventListener('loadneeded', function() {
+  //отрисовка отелей по событию из ф-ии checkNextPage
+  window.addEventListener('loadneeded', function() {
       renderPictures(currentPictures, currentPage++, false);
     });
   };
 
+  function initGallery() {
+    window.addEventListener('galleryclick', function(evt) {
+      gallery.setPhotos(evt.detail.picElement._data.pictures);
+      gallery.show();
+    });
+  }
+
+
+
   //запускаем функции фильтрации и скролла
   initFilters();
   initScroll();
+  initGallery();
 
   loadPic(function(loadedPictures) {
     pictures = loadedPictures;

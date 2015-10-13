@@ -21,13 +21,13 @@
   //если вызовем ее через new то получим новый объект от ЭТОГО объекта
   var Photo = function(data) {
     this._data = data;
-    this._element = null;
-    //this._onClick = this._OnClick.bind(this);
+    this._onClick = this._onClick.bind(this);
   };
 
-    //создаем метод render для объекта Photo
+    //создаем метод render для объекта Photo который занимается тем, 
+    // что наполняет наш шаблон реальными элементами
     Photo.prototype.render = function(container) {
-
+      //есть аргумен контейнер(то есть мы можем это все отрисовать в ЛЮБОЙ контейнер теперь)
       var newPicElement = picTemplate.content.children[0].cloneNode(true);
 
       newPicElement.querySelector(".picture img");
@@ -72,8 +72,9 @@
 //Если нет непрогруженных фото, все остальные грузить
   Photo.prototype._onClick = function() {
     if (!this._element.classList.contains('picture-load-failure')) {
-      var galleryEvent = new CustomEvent ('galleryclick', {detail: {picElement: this}});
+      var galleryEvent = new CustomEvent('galleryclick', { detail: {picElement:this} } );
       window.dispatchEvent(galleryEvent);
+      //alert("" + (this));
     }
   };
 
