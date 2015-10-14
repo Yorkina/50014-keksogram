@@ -1,4 +1,3 @@
-
 (function() {
 
   var ReadyState = {
@@ -49,7 +48,6 @@
     var picTo = picFrom + PAGE_SIZE;
     picToRender = picToRender.slice(picFrom, picTo);
 
-
     picToRender.forEach(function(photoData) {
 
       var newPicElement = new Photo(photoData);
@@ -57,27 +55,6 @@
 
       picContainer.appendChild(picFragment);
 
-
-      if (pictures['url']) {
-        var picNew = new Image();
-        var picOld = newPicElement.querySelector(".picture img");
-
-        var picLoadTimeout = setTimeout(function() {
-          failureSign(newPicElement);
-        }, IMAGE_FAILURE_TIMEOUT);
-
-        picNew.onerror = function(evt) {
-          failureSign(newPicElement);
-        };
-
-        picNew.onload = function(evt) {
-          this.setAttribute("width", 182);
-          this.setAttribute("height", 182);
-          clearTimeout(picLoadTimeout);
-          newPicElement.replaceChild(picNew, picOld);
-        };
-        picNew.src = pictures['url'];
-      }
     });
 
     picContainer.appendChild(picFragment);
@@ -156,8 +133,7 @@
         break;
 
       case 'popular':
-      default:
-      filteredPic = filteredPic.sort(function(a, b) {
+        filteredPic = filteredPic.sort(function(a, b) {
 
           if (a.likes > b.likes) {
             return -1;
@@ -172,7 +148,11 @@
           }
         });
         break;
-      }
+
+      default:
+        filteredPic = picturesToFilter.slice(0);
+    }
+
     localStorage.setItem('filterValue', filterValue);
     return filteredPic;
   };
@@ -185,7 +165,6 @@
       //в перменную записываем кликнутый элемент (эта информация содержится в объекте event)
       var clickedFilter = evt.target;
       setActiveFilter(clickedFilter.value);
-
     });
   };
   //функция установки фильтра
@@ -193,6 +172,7 @@
     //перезаписываем список картинок которые у нас есть
     currentPictures = filterPic(pictures, filterValue);
     currentPage = 0;
+    gallery.setPhotos(currentPictures);
     renderPictures(currentPictures, currentPage++, true);
   };
 
@@ -224,18 +204,20 @@
       someTimeout = setTimeout(checkNextPage, 100);
     });
 
-  //отрисовка отелей по событию из ф-ии checkNextPage
-  window.addEventListener('loadneeded', function() {
+    //отрисовка отелей по событию из ф-ии checkNextPage
+    window.addEventListener('loadneeded', function() {
       renderPictures(currentPictures, currentPage++, false);
     });
   };
 
   function initGallery() {
     window.addEventListener('galleryclick', function(evt) {
-      gallery.setPhotos(evt.detail.picElement._data.pictures);
+      gallery.setPhotos(currentPictures);
+      console.log(evt);
+      gallery.setCurrentPhoto(evt.detail.picElement._element.dataset.number);
       gallery.show();
     });
-  }
+  };
 
 
 
