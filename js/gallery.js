@@ -42,21 +42,24 @@
   };
 
   Gallery.prototype.setCurrentPhoto = function(index) {
+
     index = clamp(index, 0, this._photos.length - 1);
 
     if (this._currentPhoto === index) {
-      return;
+      this._showCurrentPhoto();
+    } else {
+      this._currentPhoto = index;
+      this._showCurrentPhoto();
     }
-
-    this._currentPhoto = index;
-    this._showCurrentPhoto();
   };
 
   Gallery.prototype._showCurrentPhoto = function() {
+
     this._pictureElement.innerHTML = '';
 
     var imageElement = new Image();
     imageElement.src = this._photos[this._currentPhoto].url;
+
     imageElement.onload = function() {
       this._pictureElement.appendChild(imageElement);
     }.bind(this);
