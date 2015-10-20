@@ -1,17 +1,8 @@
 (function() {
 
-  var ReadyState = {
-    'UNSENT': 0,
-    'OPENED': 1,
-    'HEADERS_RECEIVED': 2,
-    'LOADING': 3,
-    'DONE': 4
-  };
-
   var filtersContainer = document.querySelector(".filters");
   var picContainer = document.querySelector(".pictures");
   var picTemplate = document.querySelector(".picture-template");
-  var picFragment = document.createDocumentFragment();
 
   var IMAGE_FAILURE_TIMEOUT = 10000;
   var PAGE_SIZE = 12;
@@ -19,6 +10,7 @@
   var gallery = new Gallery();
   var currentPictures;
   var currentPage = 0;
+
 
   filtersContainer.classList.add('hidden');
 
@@ -30,76 +22,48 @@
     picContainer.classList.add('pictures-failure');
   };
 
-  function renderPictures(picToRender, pageNumber, replace) {
-    //нормализация для replace (из неизвестного значения делаем заведомо известное)
-    //если не передан аргумент replace, то придет 'udef', и в зависимости от этого, вернется true/false
+  var picturesCollection = new PicturesCollection();
+  var initiallyLoaded = [];
+  var renderedViews = [];
 
-    replace = typeof replace !== 'undefined' ? replace : true;
-
-    //если не передан номер страницы, то он равен нулю
-    pageNumber = pageNumber || 0;
-
-    if (replace) {
-      picContainer.classList.remove('picture-load-failure');
-      picContainer.innerHTML = '';
-    }
-
+  function renderPictures(pageNumber, replace) {
+    var fragment = document.createDocumentFragment();
     var picFrom = pageNumber * PAGE_SIZE;
     var picTo = picFrom + PAGE_SIZE;
-    picToRender = picToRender.slice(picFrom, picTo);
 
-    picToRender.forEach(function(photoData) {
+    if (replace) {
+      while (renderedViews.length) {
+        var viewToRemove = renderedViews.shift();
+        picContainer.removeChild(viewToRemove.el);
+        viewToRemove.off('galleryclick');
+        viewToRemove.remove();
+      }
+    }
+    
+    picturesCollection.slice(picFrom, picTo).forEach(function(model) {
 
-      var newPicElement = new Photo(photoData);
-      newPicElement.render(picFragment);
+      var view = new PhotoView({model: model});
+      view.render();
+      fragment.appendChild(view.el);
+      renderedViews.push(view);
 
-      picContainer.appendChild(picFragment);
-
+      view.on('galleryclick', function() {
+        gallery.setPhotos(view.model.get('picture'));
+        gallery.setCurrentPhoto(0);
+        gallery.show();
+      });
     });
 
-    picContainer.appendChild(picFragment);
+    picContainer.appendChild(fragment);
   }
 
-  function loadPic(callback) {
-    var xhr = new XMLHttpRequest();
-    xhr.timeout = IMAGE_FAILURE_TIMEOUT;
-    xhr.open('get', 'data/pictures.json');
-    picContainer.classList.add('pictures-loading');
-    xhr.send();
 
-    xhr.onreadystatechange = function(evt) {
-      var loadedXhr = evt.target;
-
-      switch (loadedXhr.readyState) {
-        case ReadyState.OPENED:
-        case ReadyState.HEADERS_RECEIVED:
-        case ReadyState.LOADING:
-          break;
-
-        case ReadyState.DONE:
-          picContainer.classList.remove('pictures-loading');
-        default:
-          if (xhr.status == 200) {
-            var data = loadedXhr.response;
-            callback(JSON.parse(data));
-          }
-          if (loadedXhr.status >= 400) {
-            showPicFailure();
-          }
-          break;
-      }
-    };
-    xhr.ontimeout = function() {
-      showPicFailure();
-    }
-  }
-
-  function filterPic(picturesToFilter, filterValue) {
-    var filteredPic = picturesToFilter.slice(0);
+  function filterPic(filterValue) {
+    var list = initiallyLoaded.slice(0);
     switch (filterValue) {
       case 'new':
 
-        filteredPic = filteredPic.sort(function(a, b) {
+        list.sort(function(a, b) {
 
           if (a.date > b.date) {
             return -1;
@@ -116,7 +80,7 @@
         break;
 
       case 'discussed':
-        filteredPic = filteredPic.sort(function(a, b) {
+        list.sort(function(a, b) {
 
           if (a.comments > b.comments) {
             return -1;
@@ -133,7 +97,7 @@
         break;
 
       case 'popular':
-        filteredPic = filteredPic.sort(function(a, b) {
+        list.sort(function(a, b) {
 
           if (a.likes > b.likes) {
             return -1;
@@ -150,11 +114,11 @@
         break;
 
       default:
-        filteredPic = picturesToFilter.slice(0);
+        list.slice(0);
     }
 
+    picturesCollection.reset(list);
     localStorage.setItem('filterValue', filterValue);
-    return filteredPic;
   };
 
   function initFilters() {
@@ -170,17 +134,17 @@
   //функция установки фильтра
   function setActiveFilter(filterValue) {
     //перезаписываем список картинок которые у нас есть
-    currentPictures = filterPic(pictures, filterValue);
+    filterPic(filterValue);
     currentPage = 0;
-    gallery.setPhotos(currentPictures);
-    renderPictures(currentPictures, currentPage++, true);
+    //gallery.setPhotos(currentPictures);
+    renderPictures(currentPage++, true);
   };
 
   //КОД ДЛЯ СКРОЛЛА
 
   //определение максимального скролла вверх
   function isNextPageAvailable() {
-    return currentPage < Math.ceil(pictures.length / PAGE_SIZE);
+    return currentPage < Math.ceil(picturesCollection.length / PAGE_SIZE);
   };
 
   //определние низа страницы, чтобы подгружать новые картинки
@@ -206,14 +170,13 @@
 
     //отрисовка отелей по событию из ф-ии checkNextPage
     window.addEventListener('loadneeded', function() {
-      renderPictures(currentPictures, currentPage++, false);
+      renderPictures(++currentPage, false);
     });
   };
 
-  function initGallery() {
+  /*function initGallery() {
     window.addEventListener('galleryclick', function(evt) {
       gallery.setPhotos(currentPictures);
-      console.log(evt);
       gallery.setCurrentPhoto(evt.detail.picElement._element.dataset.number);
       gallery.show();
     });
@@ -224,11 +187,16 @@
   //запускаем функции фильтрации и скролла
   initFilters();
   initScroll();
-  initGallery();
+  initGallery();*/
 
-  loadPic(function(loadedPictures) {
-    pictures = loadedPictures;
+  picturesCollection.fetch({ timeout: IMAGE_FAILURE_TIMEOUT }).success(function(loaded, state, jqXHR) {
+    initiallyLoaded = jqXHR.responseJSON;
+    initFilters();
+    initScroll();
+
     setActiveFilter(localStorage.getItem('filterValue') || 'popular');
+  }).fail(function() {
+    showPicFailure();
   });
 
   filtersContainer.classList.remove("hidden");

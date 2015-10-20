@@ -25,7 +25,7 @@
 
   //создаем метод render для объекта Photo который занимается тем, 
   // что наполняет наш шаблон реальными элементами
-  Photo.prototype.render = function(container) {
+  /*Photo.prototype.render = function(container) {
     //есть аргумен контейнер(то есть мы можем это все отрисовать в ЛЮБОЙ контейнер теперь)
     var newPicElement = picTemplate.content.children[0].cloneNode(true);
 
@@ -82,7 +82,7 @@
       });
       window.dispatchEvent(galleryEvent);
     }
-  };
+  };*/
 
   //Получить фото из объекта data_.
   //Photo.prototype.getPhotos = function() {

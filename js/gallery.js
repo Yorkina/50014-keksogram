@@ -66,7 +66,6 @@
   };
 
   Gallery.prototype._onCloseClick = function(evt) {
-    evt.preventDefault();
     this.hide();
   };
 
