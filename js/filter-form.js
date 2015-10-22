@@ -1,3 +1,5 @@
+'use strict';
+
 (function() {
   var uploadForm = document.forms['upload-select-image'];
   var resizeForm = document.forms['upload-resize'];
@@ -19,12 +21,12 @@
     }
 
     previewImage.className = 'filter-image-preview' + ' ' + filterMap[selectedFilter.value];
-  };
+  }
 
   for (var i = 0, l = selectedFilter.length; i < l; i++) {
-    selectedFilter[i].onchange = function(evt) {
+    selectedFilter[i].onchange = function() {
       setFilter();
-    }
+    };
   }
 
   prevButton.onclick = function(evt) {
@@ -34,10 +36,6 @@
     filterForm.classList.add('invisible');
     resizeForm.classList.remove('invisible');
   };
-
-
-  //ПЕЧЕНЬКИ 
-
 
   filterForm.addEventListener('submit', function(evt) {
     evt.preventDefault();
@@ -50,8 +48,7 @@
   setFilter();
 
 
-  var restoreCookies = function(form) {
-    var element;
+  var restoreCookies = function() {
 
     if (docCookies.hasItem('upload-filter')) {
       selectedFilter.value = docCookies.getItem('upload-filter');
