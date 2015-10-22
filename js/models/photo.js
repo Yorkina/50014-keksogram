@@ -1,5 +1,5 @@
 (function () {
-    var PhotoModel = Backbone.Model.extend ({
+    var PhotoModel = Backbone.Model.extend({
     initialize: function() {
         this.set('liked', false);
     },

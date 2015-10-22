@@ -10,12 +10,13 @@
   };
 
   var Gallery = function() {
+    this._photos = new Backbone.Collection();
+
     this._element = document.querySelector(".gallery-overlay");
     this._closeButton = this._element.querySelector(".gallery-overlay-close");
     this._pictureElement = this._element.querySelector(".gallery-overlay-preview");
 
     this._currentPhoto = 0;
-    this._photos = [];
 
     this._onCloseClick = this._onCloseClick.bind(this);
     this._onKeyDown = this._onKeyDown.bind(this);
@@ -26,6 +27,7 @@
     this._element.classList.remove('invisible');
     this._closeButton.addEventListener('click', this._onCloseClick);
     document.body.addEventListener('keydown', this._onKeyDown);
+    this._showCurrentPhoto();
   };
 
   Gallery.prototype.hide = function() {
@@ -33,19 +35,27 @@
     this._closeButton.removeEventListener('click', this._onCloseClick);
     document.body.removeEventListener('keydown', this._onKeyDown);
 
-    this._photos = [];
+    this._photos.reset();
     this._currentPhoto = 0;
   };
 
   Gallery.prototype.setPhotos = function(photos) {
-    this._photos = photos;
+    debugger;
+    this._photos.reset(photos.map(function(photoSrc) {
+      debugger;
+      return new Backbone.Model({
+        url: photoSrc
+      });
+    }));
   };
 
   Gallery.prototype.setCurrentPhoto = function(index) {
-
-    index = clamp(index, 0, this._photos.length - 1);
+    debugger;
+    index = clamp(index, 0, this._photos.length + 1);
+    debugger;
 
     if (this._currentPhoto === index) {
+      debugger;
       this._showCurrentPhoto();
     } else {
       this._currentPhoto = index;
@@ -56,16 +66,19 @@
   Gallery.prototype._showCurrentPhoto = function() {
 
     this._pictureElement.innerHTML = '';
+    debugger;
+    console.log(this._pictureElement);
+    debugger;
+    var imageElement = new GalleryPicture({ model: this._photos.at(this._currentPhoto) });
+    console.log(imageElement);
+    debugger;
+    imageElement.render();
+    this._pictureElement.appendChild(imageElement.el);
 
-    var imageElement = new Image();
-    imageElement.src = this._photos[this._currentPhoto].url;
-
-    imageElement.onload = function() {
-      this._pictureElement.appendChild(imageElement);
-    }.bind(this);
   };
 
   Gallery.prototype._onCloseClick = function(evt) {
+    evt.preventDefault();
     this.hide();
   };
 

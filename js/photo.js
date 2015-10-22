@@ -18,10 +18,10 @@
   //функция конструктор которая привязывает через bind this ко всем, 
   //наследуемым от нее объектам(Photo с большой буквы так как конструктор)
   //если вызовем ее через new то получим новый объект от ЭТОГО объекта
-  var Photo = function(data) {
-    this._data = data;
-    this._onClick = this._onClick.bind(this);
-  };
+  //var Photo = function(data) {
+    //this._data = data;
+    //this._onClick = this._onClick.bind(this);
+  //};
 
   //создаем метод render для объекта Photo который занимается тем, 
   // что наполняет наш шаблон реальными элементами
@@ -74,15 +74,17 @@
   };
 
   //Если нет непрогруженных фото, все остальные грузить
-  Photo.prototype._onClick = function(evt) {
-    evt.preventDefault();
-    if (!this._element.classList.contains('picture-load-failure')) {
-      var galleryEvent = new CustomEvent('galleryclick', {
-        detail: { picElement: this }
-      });
-      window.dispatchEvent(galleryEvent);
-    }
-  };*/
+  */
+  //Photo.prototype._onClick = function(evt) {
+    //evt.preventDefault();
+    //debugger;
+    //if (!this._element.classList.contains('picture-load-failure')) {
+      //var galleryEvent = new CustomEvent('galleryclick', {
+       // detail: { picElement: this }
+      //});
+      //window.dispatchEvent(galleryEvent);
+    //}
+  //};
 
   //Получить фото из объекта data_.
   //Photo.prototype.getPhotos = function() {
@@ -90,7 +92,7 @@
   //console.log(this._data.pictures);
   //};
   //Выносим в глобальную область видимости конструктор Photo
-  window.Photo = Photo;
+  //window.Photo = Photo;
 
 
 })();

@@ -8,23 +8,20 @@
   var PAGE_SIZE = 12;
 
   var gallery = new Gallery();
-  var currentPictures;
   var currentPage = 0;
 
 
   filtersContainer.classList.add('hidden');
 
-  function failureSign(elem) {
-    elem.classList.add('picture-load-failure');
-  };
 
   function showPicFailure() {
     picContainer.classList.add('pictures-failure');
-  };
+  }
 
   var picturesCollection = new PicturesCollection();
   var initiallyLoaded = [];
   var renderedViews = [];
+  var pictureToRender = [];
 
   function renderPictures(pageNumber, replace) {
     var fragment = document.createDocumentFragment();
@@ -46,12 +43,15 @@
       view.render();
       fragment.appendChild(view.el);
       renderedViews.push(view);
+      pictureToRender.push(view.el);
 
       view.on('galleryclick', function() {
-        gallery.setPhotos(view.model.get('picture'));
-        gallery.setCurrentPhoto(0);
+        debugger;
+        gallery.setPhotos(picturesCollection);
+        gallery.setCurrentPhoto(picturesCollection.models.indexOf(model));
         gallery.show();
       });
+      return view;
     });
 
     picContainer.appendChild(fragment);
@@ -176,18 +176,20 @@
 
   /*function initGallery() {
     window.addEventListener('galleryclick', function(evt) {
+      evt.preventDefault();
+      debugger;
+      console.log(evt.detail.pictureElement._data.number);
       gallery.setPhotos(currentPictures);
       gallery.setCurrentPhoto(evt.detail.picElement._element.dataset.number);
       gallery.show();
     });
-  };
+  };*/
 
 
 
-  //запускаем функции фильтрации и скролла
-  initFilters();
-  initScroll();
-  initGallery();*/
+ 
+  //initScroll();
+  //initGallery();
 
   picturesCollection.fetch({ timeout: IMAGE_FAILURE_TIMEOUT }).success(function(loaded, state, jqXHR) {
     initiallyLoaded = jqXHR.responseJSON;

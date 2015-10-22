@@ -1,40 +1,43 @@
-(function () {
-    var IMAGE_FAILURE_TIMEOUT = 10000;
-    var pictureTemplate = document.querySelector(".picture-template");
-    var pictureContainer = document.querySelector(".pictures");
-    var PhotoView = Backbone.View.extend ({
+(function() {
+  var IMAGE_FAILURE_TIMEOUT = 10000;
+  var pictureTemplate = document.querySelector('.picture-template');
+  var PhotoView = Backbone.View.extend({
 
     initialize: function() {
 
-        this._onImageLoad = this._onImageLoad.bind(this);
-        this._onImageFail = this._onImageFail.bind(this);
-        this._onModelLike = this._onModelLike.bind(this);
-        this._onClick = this._onClick.bind(this);
+      this._onImageLoad = this._onImageLoad.bind(this);
+      this._onImageFail = this._onImageFail.bind(this);
+      this._onModelLike = this._onModelLike.bind(this);
+      this._onClick = this._onClick.bind(this);
 
-        this.model.on('change:liked', this._onModelLike);
+      this.model.on('change:liked', this._onModelLike);
     },
 
     events: {
-        'click': '_onClick'
+      'click': '_onClick'
     },
 
     tagName: 'a',
 
     className: 'picture',
 
-    render: function() {
-        this.el.appendChild(pictureTemplate.content.children[0].cloneNode(true));
-        this.el.querySelector(".picture-comments").textContent = this.model.get['comments'];
-        this.el.querySelector(".picture-likes").textContent = this.model.get['likes'];
+    el: function() {
+      return pictureTemplate.content.children[0].cloneNode(true);
+    },
 
-        console.log("test2");
-    if (this.model.get('url')) {
+
+    render: function() {
+      this.el.querySelector('.picture-comments').textContent = this.model.get['comments'];
+      this.el.querySelector('.picture-likes').textContent = this.model.get['likes'];
+
+      if (this.model.get('url')) {
         var pictureReplace = new Image();
-        var pictureDeleted = this.el.querySelector(".picture img")
+        var pictureDeleted = this.el.querySelector('.picture img');
         pictureReplace.src = this.model.get('url');
 
+
         this._imageLoadTimeout = setTimeout(function() {
-            this.el.classList.add('picture-load-failure');
+          this.el.classList.add('picture-load-failure');
         }.bind(this), IMAGE_FAILURE_TIMEOUT);
 
         pictureReplace.addEventListener('load', this._onImageLoad);
@@ -42,49 +45,48 @@
         pictureReplace.addEventListener('abort', this._onImageFail);
 
         pictureDeleted.parentNode.replaceChild(pictureReplace, pictureDeleted);
+
       }
-    this._updateLike();
-  },
+      this._updateLike();
+    },
 
     _onClick: function(evt) {
-        var clickedElement = evt.target;
-        if (clickedElement.classList.contains('pictures') &&
-         !clickedElement.classList.contains('picture-load-failure')) {
-            this.trigger('galleryclick');
-        }
+      var clickedElement = evt.target.parentNode;
+      if (clickedElement.classList.contains('picture') &&
+        !clickedElement.classList.contains('picture-load-failure')) {
+        this.trigger('galleryclick');
+      }
 
-        if (evt.target.classList.contains('picture-likes')) {
-            if(this.model.get('liked')) {
-                this.model.dislike();
-            } else {
-                this.model.like();
-            }
+      if (evt.target.classList.contains('picture-likes')) {
+        if (this.model.get('liked')) {
+          this.model.dislike();
+        } else {
+          this.model.like();
         }
+      }
     },
 
     _onImageLoad: function(evt) {
       clearTimeout(this._imageLoadTimeout);
       var loadedImage = evt.path[0];
-      console.log(evt.path[0]);
       this._cleanupImageListeners(loadedImage);
-        evt.path[0].setAttribute("height", 182);
-        evt.path[0].setAttribute("width", 182);
+      evt.path[0].setAttribute("height", 182);
+      evt.path[0].setAttribute("width", 182);
     },
 
 
     _onImageFail: function(evt) {
-        var failedImage = evt.path[0];
-        this._cleanupImageListeners(failedImage);
-        failedImage.src = 'failed.jpg' 
-        this.el.classList.add('picture-load-failure');
-        
+      var failedImage = evt.path[0];
+      this._cleanupImageListeners(failedImage);
+      failedImage.src = 'failed.jpg';
+      this.el.classList.add('picture-load-failure');
     },
 
     _onModelLike: function() {
       this._updateLike();
     },
 
-    
+
     _updateLike: function() {
       var likeButton = this.el.querySelector('.picture-likes');
 
@@ -95,16 +97,10 @@
 
     _cleanupImageListeners: function(image) {
       image.removeEventListener('load', this._onImageLoad);
-      image.removeEventListener('error', this._onImageError);
-      image.removeEventListener('abort', this._onImageError);
+      image.removeEventListener('error', this._onImageFail);
+      image.removeEventListener('abort', this._onImageFail);
     }
   });
 
   window.PhotoView = PhotoView;
 })();
-
-
-
-
-
-
