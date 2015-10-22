@@ -356,6 +356,9 @@ input[type=radio]:checked + .upload-filter-label {
   height: 15px;
   width: 19px;
 }
+.picture-likes-liked:before {
+  outline:2px solid #fac;
+}
 
 @media (min-width: 1380px) {
   .pictures {

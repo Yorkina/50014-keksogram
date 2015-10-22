@@ -1,130 +1,70 @@
-
 (function() {
-
-  var ReadyState = {
-    'UNSENT': 0,
-    'OPENED': 1,
-    'HEADERS_RECEIVED': 2,
-    'LOADING': 3,
-    'DONE': 4
-  };
 
   var filtersContainer = document.querySelector(".filters");
   var picContainer = document.querySelector(".pictures");
+  var picTemplate = document.querySelector(".picture-template");
 
   var IMAGE_FAILURE_TIMEOUT = 10000;
   var PAGE_SIZE = 12;
 
-  var pictures;
-  var currentPictures;
-  var currentPage;
+  var gallery = new Gallery();
+  var currentPage = 0;
+
 
   filtersContainer.classList.add('hidden');
 
-  function failureSign(elem) {
-    elem.classList.add('picture-load-failure');
-  };
 
   function showPicFailure() {
     picContainer.classList.add('pictures-failure');
-  };
+  }
 
-  function renderPictures(picToRender, pageNumber, replace) {
-    //нормализация для replace (из неизвестного значения делаем заведомо известное)
-    //если не передан аргумент replace, то придет 'udef', и в зависимости от этого, вернется true/false
+  var picturesCollection = new PicturesCollection();
+  var initiallyLoaded = [];
+  var renderedViews = [];
+  var pictureToRender = [];
 
-    replace = typeof replace !== 'undefined' ? replace : true;
-
-    //если не передан номер страницы, то он равен нулю
-    pageNumber = pageNumber || 0;
-
-    if (replace) {
-      picContainer.classList.remove('picture-load-failure');
-      picContainer.innerHTML = '';
-    }
-    var picTemplate = document.querySelector(".picture-template");
-    var picFragment = document.createDocumentFragment();
-
+  function renderPictures(pageNumber, replace) {
+    var fragment = document.createDocumentFragment();
     var picFrom = pageNumber * PAGE_SIZE;
     var picTo = picFrom + PAGE_SIZE;
-    picToRender = picToRender.slice(picFrom, picTo);
 
-    picToRender.forEach(function(pictures) {
-
-      var newPicElement = picTemplate.content.children[0].cloneNode(true);
-
-      newPicElement.querySelector(".picture img");
-      newPicElement.querySelector(".picture-comments").textContent = pictures['comments'];
-      newPicElement.querySelector(".picture-likes").textContent = pictures['likes'];
-
-      picFragment.appendChild(newPicElement);
-
-
-      if (pictures['url']) {
-        var picNew = new Image();
-        var picOld = newPicElement.querySelector(".picture img");
-
-        var picLoadTimeout = setTimeout(function() {
-          failureSign(newPicElement);
-        }, IMAGE_FAILURE_TIMEOUT);
-
-        picNew.onerror = function(evt) {
-          failureSign(newPicElement);
-        };
-
-        picNew.onload = function(evt) {
-          this.setAttribute("width", 182);
-          this.setAttribute("height", 182);
-          clearTimeout(picLoadTimeout);
-          newPicElement.replaceChild(picNew, picOld);
-        };
-        picNew.src = pictures['url'];
+    if (replace) {
+      while (renderedViews.length) {
+        var viewToRemove = renderedViews.shift();
+        picContainer.removeChild(viewToRemove.el);
+        viewToRemove.off('galleryclick');
+        viewToRemove.remove();
       }
+    }
+    
+    picturesCollection.slice(picFrom, picTo).forEach(function(model) {
+
+      var view = new PhotoView({model: model});
+      view.render();
+      fragment.appendChild(view.el);
+      renderedViews.push(view);
+      pictureToRender.push(view.el);
+
+      view.on('galleryclick', function() {
+        event.preventDefault();
+        debugger;
+        gallery.setPhotos(picturesCollection);
+        gallery.setCurrentPhoto(picturesCollection.models.indexOf(model));
+        gallery.show();
+      });
+      return view;
     });
 
-    picContainer.appendChild(picFragment);
+    picContainer.appendChild(fragment);
   }
 
-  function loadPic(callback) {
-    var xhr = new XMLHttpRequest();
-    xhr.timeout = IMAGE_FAILURE_TIMEOUT;
-    xhr.open('get', 'data/pictures.json');
-    picContainer.classList.add('pictures-loading');
-    xhr.send();
 
-    xhr.onreadystatechange = function(evt) {
-      var loadedXhr = evt.target;
-
-      switch (loadedXhr.readyState) {
-        case ReadyState.OPENED:
-        case ReadyState.HEADERS_RECEIVED:
-        case ReadyState.LOADING:
-          break;
-
-        case ReadyState.DONE:
-          picContainer.classList.remove('pictures-loading');
-        default:
-          if (xhr.status == 200) {
-            var data = loadedXhr.response;
-            callback(JSON.parse(data));
-          }
-          if (loadedXhr.status >= 400) {
-            showPicFailure();
-          }
-          break;
-      }
-    };
-    xhr.ontimeout = function() {
-      showPicFailure();
-    }
-  }
-
-  function filterPic(picturesToFilter, filterValue) {
-    var filteredPic = picturesToFilter.slice(0);
+  function filterPic(filterValue) {
+    var list = initiallyLoaded.slice(0);
     switch (filterValue) {
       case 'new':
 
-        filteredPic = filteredPic.sort(function(a, b) {
+        list.sort(function(a, b) {
 
           if (a.date > b.date) {
             return -1;
@@ -141,7 +81,7 @@
         break;
 
       case 'discussed':
-        filteredPic = filteredPic.sort(function(a, b) {
+        list.sort(function(a, b) {
 
           if (a.comments > b.comments) {
             return -1;
@@ -158,13 +98,28 @@
         break;
 
       case 'popular':
+        list.sort(function(a, b) {
+
+          if (a.likes > b.likes) {
+            return -1;
+          }
+
+          if (a.likes === b.likes) {
+            return 0;
+          }
+
+          if (a.likes < b.likes) {
+            return 1;
+          }
+        });
+        break;
 
       default:
-        filteredPic = picturesToFilter.slice(0);
-        break;
+        list.slice(0);
     }
+
+    picturesCollection.reset(list);
     localStorage.setItem('filterValue', filterValue);
-    return filteredPic;
   };
 
   function initFilters() {
@@ -175,22 +130,22 @@
       //в перменную записываем кликнутый элемент (эта информация содержится в объекте event)
       var clickedFilter = evt.target;
       setActiveFilter(clickedFilter.value);
-
     });
   };
   //функция установки фильтра
   function setActiveFilter(filterValue) {
-    //перезаписываем список отелей которые у нас есть
-    currentPictures = filterPic(pictures, filterValue);
+    //перезаписываем список картинок которые у нас есть
+    filterPic(filterValue);
     currentPage = 0;
-    renderPictures(currentPictures, currentPage, true);
+    //gallery.setPhotos(currentPictures);
+    renderPictures(currentPage++, true);
   };
 
   //КОД ДЛЯ СКРОЛЛА
 
   //определение максимального скролла вверх
   function isNextPageAvailable() {
-    return currentPage < Math.ceil(pictures.length / PAGE_SIZE);
+    return currentPage < Math.ceil(picturesCollection.length / PAGE_SIZE);
   };
 
   //определние низа страницы, чтобы подгружать новые картинки
@@ -216,17 +171,35 @@
 
     //отрисовка отелей по событию из ф-ии checkNextPage
     window.addEventListener('loadneeded', function() {
-      renderPictures(currentPictures, currentPage++, false);
+      renderPictures(++currentPage, false);
     });
   };
 
-  //запускаем функции фильтрации и скролла
-  initFilters();
-  initScroll();
+  /*function initGallery() {
+    window.addEventListener('galleryclick', function(evt) {
+      evt.preventDefault();
+      debugger;
+      console.log(evt.detail.pictureElement._data.number);
+      gallery.setPhotos(currentPictures);
+      gallery.setCurrentPhoto(evt.detail.picElement._element.dataset.number);
+      gallery.show();
+    });
+  };*/
 
-  loadPic(function(loadedPictures) {
-    pictures = loadedPictures;
+
+
+ 
+  //initScroll();
+  //initGallery();
+
+  picturesCollection.fetch({ timeout: IMAGE_FAILURE_TIMEOUT }).success(function(loaded, state, jqXHR) {
+    initiallyLoaded = jqXHR.responseJSON;
+    initFilters();
+    initScroll();
+
     setActiveFilter(localStorage.getItem('filterValue') || 'popular');
+  }).fail(function() {
+    showPicFailure();
   });
 
   filtersContainer.classList.remove("hidden");
