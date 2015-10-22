@@ -40,22 +40,17 @@
   };
 
   Gallery.prototype.setPhotos = function(photos) {
-    debugger;
     this._photos.reset(photos.map(function(photoSrc) {
-      debugger;
       return new Backbone.Model({
-        url: photoSrc
+        url: photoSrc.attributes.url
       });
     }));
   };
 
   Gallery.prototype.setCurrentPhoto = function(index) {
-    debugger;
     index = clamp(index, 0, this._photos.length + 1);
-    debugger;
 
     if (this._currentPhoto === index) {
-      debugger;
       this._showCurrentPhoto();
     } else {
       this._currentPhoto = index;
@@ -66,12 +61,7 @@
   Gallery.prototype._showCurrentPhoto = function() {
 
     this._pictureElement.innerHTML = '';
-    debugger;
-    console.log(this._pictureElement);
-    debugger;
     var imageElement = new GalleryPicture({ model: this._photos.at(this._currentPhoto) });
-    console.log(imageElement);
-    debugger;
     imageElement.render();
     this._pictureElement.appendChild(imageElement.el);
 

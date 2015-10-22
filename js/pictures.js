@@ -46,6 +46,7 @@
       pictureToRender.push(view.el);
 
       view.on('galleryclick', function() {
+        event.preventDefault();
         debugger;
         gallery.setPhotos(picturesCollection);
         gallery.setCurrentPhoto(picturesCollection.models.indexOf(model));
