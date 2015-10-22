@@ -1,6 +1,19 @@
+'use strict';
+
 (function() {
+  /**
+  * @const
+  * @type {number}
+  */
   var IMAGE_FAILURE_TIMEOUT = 10000;
+  /**
+   * @type {Element}
+   */
   var pictureTemplate = document.querySelector('.picture-template');
+  /**
+   * @constructor
+   * @extends {Backbone.View}
+   */
   var PhotoView = Backbone.View.extend({
 
     initialize: function() {
@@ -12,13 +25,23 @@
 
       this.model.on('change:liked', this._onModelLike);
     },
-
+    /**
+     * @type {Object.<string, string>}
+     */
     events: {
       'click': '_onClick'
     },
-
+    /**
+     * Тег, использующийся для элемента представления.
+     * @type {string}
+     * @override
+     */
     tagName: 'a',
-
+    /**
+     * Класс элемента.
+     * @type {string}
+     * @override
+     */
     className: 'picture',
 
     el: function() {
@@ -49,7 +72,11 @@
       }
       this._updateLike();
     },
-
+    /**
+     * Обработчик кликов по элементу.
+     * @param {MouseEvent} evt
+     * @private
+     */
     _onClick: function(evt) {
       evt.preventDefault();
       console.log(evt.target);
@@ -67,28 +94,37 @@
         }
       }
     },
-
+    /**
+     * @param {Event} evt
+     * @private
+     */
     _onImageLoad: function(evt) {
       clearTimeout(this._imageLoadTimeout);
       var loadedImage = evt.path[0];
       this._cleanupImageListeners(loadedImage);
-      evt.path[0].setAttribute("height", 182);
-      evt.path[0].setAttribute("width", 182);
+      evt.path[0].setAttribute('height', 182);
+      evt.path[0].setAttribute('width', 182);
     },
 
-
+     /**
+     * @param {Event} evt
+     * @private
+     */
     _onImageFail: function(evt) {
       var failedImage = evt.path[0];
       this._cleanupImageListeners(failedImage);
       failedImage.src = 'failed.jpg';
       this.el.classList.add('picture-load-failure');
     },
-
+    /**
+     * @private
+     */
     _onModelLike: function() {
       this._updateLike();
     },
-
-
+    /**
+     * @private
+     */
     _updateLike: function() {
       var likeButton = this.el.querySelector('.picture-likes');
 
@@ -96,7 +132,11 @@
         likeButton.classList.toggle('picture-likes-liked', this.model.get('liked'));
       }
     },
-
+    /**
+     * Удаление обработчиков событий на элементе.
+     * @param {Image} image
+     * @private
+     */
     _cleanupImageListeners: function(image) {
       image.removeEventListener('load', this._onImageLoad);
       image.removeEventListener('error', this._onImageFail);

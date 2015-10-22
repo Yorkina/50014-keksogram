@@ -1,9 +1,15 @@
-(function () {
+'use strict';
+/* global
+  PhotoModel: true
+*/
 
-    var PicturesCollection = Backbone.Collection.extend ({
-        model: PhotoModel,
-        url: 'data/pictures.json'
-    });
-    
-    window.PicturesCollection = PicturesCollection;
+(function() {
+  var PicturesCollection = Backbone.Collection.extend({
+    model: PhotoModel,
+    url: 'data/pictures.json'
+  });
+
+
+  window.PicturesCollection = PicturesCollection;
+
 })();

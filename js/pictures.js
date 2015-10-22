@@ -1,13 +1,30 @@
+'use strict';
+/* global
+  Gallery: true
+  PicturesCollection: true
+  PhotoView: true
+*/
 (function() {
 
-  var filtersContainer = document.querySelector(".filters");
-  var picContainer = document.querySelector(".pictures");
-  var picTemplate = document.querySelector(".picture-template");
-
+  var filtersContainer = document.querySelector('.filters');
+  var picContainer = document.querySelector('.pictures');
+  /**
+  * @const
+  * @type {number}
+  */
   var IMAGE_FAILURE_TIMEOUT = 10000;
+  /**
+  * @const
+  * @type {number}
+  */
   var PAGE_SIZE = 12;
-
+   /**
+   * @type {Gallery}
+   */
   var gallery = new Gallery();
+   /**
+   * @type {number}
+   */
   var currentPage = 0;
 
 
@@ -17,11 +34,20 @@
   function showPicFailure() {
     picContainer.classList.add('pictures-failure');
   }
-
+  /**
+   * @type {picturesCollection}
+   */
   var picturesCollection = new PicturesCollection();
+   /**
+   * @type {Array}
+   */
   var initiallyLoaded = [];
   var renderedViews = [];
-  var pictureToRender = [];
+
+   /**
+   * @param  {number} pageNumber
+   * @param  {boolean} replace
+   */
 
   function renderPictures(pageNumber, replace) {
     var fragment = document.createDocumentFragment();
@@ -36,18 +62,15 @@
         viewToRemove.remove();
       }
     }
-    
+
     picturesCollection.slice(picFrom, picTo).forEach(function(model) {
 
       var view = new PhotoView({model: model});
       view.render();
       fragment.appendChild(view.el);
       renderedViews.push(view);
-      pictureToRender.push(view.el);
 
       view.on('galleryclick', function() {
-        event.preventDefault();
-        debugger;
         gallery.setPhotos(picturesCollection);
         gallery.setCurrentPhoto(picturesCollection.models.indexOf(model));
         gallery.show();
@@ -57,8 +80,10 @@
 
     picContainer.appendChild(fragment);
   }
-
-
+  /*
+  * @param  {string} filterValue
+  * @return {Array}
+  */
   function filterPic(filterValue) {
     var list = initiallyLoaded.slice(0);
     switch (filterValue) {
@@ -120,7 +145,7 @@
 
     picturesCollection.reset(list);
     localStorage.setItem('filterValue', filterValue);
-  };
+  }
 
   function initFilters() {
     //ищем контейнер, в котором лежат фильтры(NB! - уже есть переменная filter)
@@ -131,36 +156,45 @@
       var clickedFilter = evt.target;
       setActiveFilter(clickedFilter.value);
     });
-  };
+  }
   //функция установки фильтра
+  /*
+  *@param {string} filterValue
+  */
   function setActiveFilter(filterValue) {
     //перезаписываем список картинок которые у нас есть
     filterPic(filterValue);
     currentPage = 0;
     //gallery.setPhotos(currentPictures);
     renderPictures(currentPage++, true);
-  };
+  }
 
   //КОД ДЛЯ СКРОЛЛА
 
-  //определение максимального скролла вверх
+  /**
+  * Проверяет можно ли отрисовать следующую страницу списка отелей.
+  * @return {boolean}
+  */
   function isNextPageAvailable() {
     return currentPage < Math.ceil(picturesCollection.length / PAGE_SIZE);
-  };
+  }
 
-  //определние низа страницы, чтобы подгружать новые картинки
+  /**
+  * Проверяет, находится ли скролл внизу страницы.
+  * @return {boolean}
+  */
   function isAtTheBottom() {
     var GAP = 100;
     //проверяем где низ контейнера с картинками
     return picContainer.getBoundingClientRect().bottom - GAP <= window.innerHeight;
-  };
+  }
 
   function checkNextPage() {
     if (isAtTheBottom() && isNextPageAvailable()) {
       //выстреливатель события которое отрисовывает отели
       window.dispatchEvent(new CustomEvent('loadneeded'));
     }
-  };
+  }
   //функция скролла
   function initScroll() {
     var someTimeout;
@@ -173,25 +207,11 @@
     window.addEventListener('loadneeded', function() {
       renderPictures(++currentPage, false);
     });
-  };
+  }
 
-  /*function initGallery() {
-    window.addEventListener('galleryclick', function(evt) {
-      evt.preventDefault();
-      debugger;
-      console.log(evt.detail.pictureElement._data.number);
-      gallery.setPhotos(currentPictures);
-      gallery.setCurrentPhoto(evt.detail.picElement._element.dataset.number);
-      gallery.show();
-    });
-  };*/
-
-
-
- 
-  //initScroll();
-  //initGallery();
-
+  /**
+   * @type {PicturesCollection}
+   */
   picturesCollection.fetch({ timeout: IMAGE_FAILURE_TIMEOUT }).success(function(loaded, state, jqXHR) {
     initiallyLoaded = jqXHR.responseJSON;
     initFilters();
@@ -202,5 +222,5 @@
     showPicFailure();
   });
 
-  filtersContainer.classList.remove("hidden");
+  filtersContainer.classList.remove('hidden');
 })();
