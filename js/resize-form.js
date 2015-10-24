@@ -1,5 +1,3 @@
-'use strict';
-
 (function() {
   var uploadForm = document.forms['upload-select-image'];
   var resizeForm = document.forms['upload-resize'];
@@ -24,69 +22,4 @@
     resizeForm.classList.add('invisible');
     filterForm.classList.remove('invisible');
   };
-
-
-    //код мой
-
-  var squareSize = document.getElementById('resize-size');
-  var leftSize = document.getElementById('resize-x');
-  var topSize = document.getElementById('resize-y');
-
-  var imgHeight = 0;
-  var imgWidth = 0;
-
-  //считываем факт загрузки картинки
-  document.querySelector('.resize-image-preview').addEventListener('load', function() {
-
-  //получаем размеры каринки после загрузки
-    imgWidth = this.clientWidth;
-    imgHeight = this.clientHeight;
-
-  //обнуляем форму
-    leftSize.value = 0;
-    topSize.value = 0;
-    squareSize.value = Math.min(imgWidth, imgHeight);
-
-  //находим максимальное значение стороны квадрата
-
-    squareSize.max = Math.min(imgWidth, imgHeight);
-
-    leftSize.max = imgWidth - squareSize.max;
-    topSize.max = imgHeight - squareSize.max;
-  });
-
-  //находим максимальное значение отступа, если есть отступ слева
-  leftSize.addEventListener('change', function() {
-    if (!squareSize.value) {
-      this.max = squareSize.max - squareSize.min;
-    } else {
-      this.max = imgWidth - squareSize.value;
-    }
-  });
-
-  //находим максимальное значение отступа, если есть отступ сверху
-  topSize.addEventListener('change', function() {
-    if (!squareSize.value) {
-      this.max = squareSize.max - squareSize.min;
-    } else {
-      this.max = imgHeight - squareSize.value;
-    }
-  });
-
-  //пересчитваем поля отступов, если ввели вручную размер и хотим с ним жить
-  squareSize.addEventListener('change', function() {
-
-    if (squareSize.max > 1) {
-      topSize.max = (imgHeight - squareSize.value);
-      leftSize.max = (imgWidth - squareSize.value);
-    }
-  });
-
 })();
-
-
-
-
-
-
-
