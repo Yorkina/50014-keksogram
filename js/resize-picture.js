@@ -11,9 +11,9 @@
     this._image.src = image;
 
     // Холст.
+    debugger;
     this._container = document.createElement('canvas');
     this._ctx = this._container.getContext('2d');
-
     // Создаем холст только после загрузки изображения.
     this._image.onload = function() {
       debugger;
@@ -80,6 +80,7 @@
      */
     redraw: function() {
       // Очистка изображения.
+      debugger;
       this._ctx.clearRect(0, 0, this._container.width, this._container.height);
 
       // Сохранение состояния канваса.

@@ -27,20 +27,11 @@
 
   uploadForm.onsubmit = function(evt) {
     evt.preventDefault();
-
+    debugger;
     uploadImage(fileElement, function(image) {
-
-      var resizeSquare = new Resizer();
-      debugger;
-      resizer = 
-      resizeSquare.setElement(resizeForm);
-
-      resizeSquare.redraw = function() {
-        debugger;
-        this._ctx.strokeRect();
-      };
-
-      debugger;
+      var resizeSquare = new Resizer(image);
+      resizer = resizeSquare;
+      resizer.setElement(resizeForm);
       sessionStorage.setItem('uploaded-image', image);
       resizeForm.querySelector('.resize-image-preview').src = image;
       filterForm.querySelector('.filter-image-preview').src = image;
