@@ -136,7 +136,6 @@
       this._cursorPosition = null;
       document.body.removeEventListener('mousemove', this._onDrag);
       document.body.removeEventListener('mouseup', this._onDragEnd);
-      requestAnimationFrame();
     },
 
     /**
