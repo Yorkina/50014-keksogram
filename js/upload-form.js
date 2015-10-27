@@ -27,14 +27,14 @@
 
   uploadForm.onsubmit = function(evt) {
     evt.preventDefault();
-    debugger;
+
     uploadImage(fileElement, function(image) {
-      var resizeSquare = new Resizer(image);
-      resizer = resizeSquare;
-      resizer.setElement(resizeForm);
       sessionStorage.setItem('uploaded-image', image);
       resizeForm.querySelector('.resize-image-preview').src = image;
-      filterForm.querySelector('.filter-image-preview').src = image;
+      //filterForm.querySelector('.filter-image-preview').src = image;
+
+      resizer = new Resizer(image);
+      resizer.setElement(resizeForm);
 
       uploadForm.classList.add('invisible');
       resizeForm.classList.remove('invisible');

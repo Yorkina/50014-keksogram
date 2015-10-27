@@ -11,12 +11,10 @@
     this._image.src = image;
 
     // Холст.
-    debugger;
     this._container = document.createElement('canvas');
     this._ctx = this._container.getContext('2d');
     // Создаем холст только после загрузки изображения.
     this._image.onload = function() {
-      debugger;
       // Размер холста равен размеру загруженного изображения. Это нужно
       // для удобства работы с координатами.
       this._container.width = this._image.naturalWidth;
@@ -80,8 +78,8 @@
      */
     redraw: function() {
       // Очистка изображения.
-      debugger;
       this._ctx.clearRect(0, 0, this._container.width, this._container.height);
+      console.log(this._container);
 
       // Сохранение состояния канваса.
       // Подробней см. строку 132.
@@ -95,12 +93,19 @@
       // Отрисовка изображения на холсте. Параметры задают изображение, которое
       // нужно отрисовать и координаты его верхнего левого угла.
       // Координаты задаются от центра холста.
-      this._ctx.drawImage(this._image, displX, displY);
+      //this._ctx.drawImage(this._image, displX, displY);
 
       // Отрисовка прямоугольника, обозначающего область изображения после
       // кадрирования. Координаты задаются от центра.
       //
-
+      this._ctx.strokeStyle = '#FFE753';
+      this._ctx.lineWidth = 6;
+      this._ctx.setLineDash([15, 10]);
+      this._ctx.strokeRect(
+        -this._resizeConstraint.side / 2,
+        -this._resizeConstraint.side / 2,
+        this._resizeConstraint.side,
+        this._resizeConstraint.side);
       // Восстановление состояния канваса, которое было до вызова ctx.save
       // и последующего изменения системы координат. Нужно для того, чтобы
       // следующий кадр рисовался с привычной системой координат, где точка
@@ -132,6 +137,7 @@
       this._cursorPosition = null;
       document.body.removeEventListener('mousemove', this._onDrag);
       document.body.removeEventListener('mouseup', this._onDragEnd);
+      requestAnimationFrame();
     },
 
     /**
