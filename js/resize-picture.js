@@ -79,7 +79,6 @@
     redraw: function() {
       // Очистка изображения.
       this._ctx.clearRect(0, 0, this._container.width, this._container.height);
-      console.log(this._container);
 
       // Сохранение состояния канваса.
       // Подробней см. строку 132.
