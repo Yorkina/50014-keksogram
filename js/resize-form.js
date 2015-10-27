@@ -1,3 +1,8 @@
+'use strict';
+/* global
+  resizer: true
+*/
+
 (function() {
   var uploadForm = document.forms['upload-select-image'];
   var resizeForm = document.forms['upload-resize'];
@@ -30,7 +35,7 @@
     filterForm.classList.remove('invisible');
   };
   resizeSize.addEventListener('change', function() {
-    resizer.setConstraint(resizer.getConstraint().x,resizer.getConstraint().y,resizeSize.value);
+    resizer.setConstraint(resizer.getConstraint().x, resizer.getConstraint().y, parseInt(resizeSize.value, 10));
   });
 
   var imgHeight = 0,
@@ -79,12 +84,18 @@
   });
 
   window.addEventListener('resizerchange', function() {
-    debugger;
-    if (squareSize.value < squareSize.max) {
-      resizer.setConstraint(leftSize.max, topSize.max, squareSize.value);
-    } else {
-      resizer.setConstraint(leftSize.max, topSize.max, squareSize.max);
+    var constraint = resizer.getConstraint();
+    var x = 0 > constraint.x ? 0 : undefined;
+    var y = 0 > constraint.y ? 0 : undefined;
+
+    if (x === undefined && imgWidth - constraint.x < constraint.side) {
+      x = imgWidth - constraint.side;
     }
+
+    if (y === undefined && imgHeight - constraint.y < constraint.side) {
+      y = imgHeight - constraint.side;
+    }
+
   });
 
 })();
