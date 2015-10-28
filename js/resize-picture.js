@@ -9,7 +9,6 @@
     // Изображение, с которым будет вестись работа.
     this._image = new Image();
     this._image.src = image;
-
     // Холст.
     this._container = document.createElement('canvas');
     this._ctx = this._container.getContext('2d');
@@ -40,6 +39,7 @@
 
       // Отрисовка изначального состояния канваса.
       this.redraw();
+      window.dispatchEvent(new CustomEvent('pictureload'));
     }.bind(this);
 
     // Фиксирование контекста обработчиков.
@@ -83,7 +83,6 @@
       // Сохранение состояния канваса.
       // Подробней см. строку 132.
       this._ctx.save();
-
       // Установка начальной точки системы координат в центр холста.
       this._ctx.translate(this._container.width / 2, this._container.height / 2);
 
@@ -257,6 +256,7 @@
       var imageToExport = new Image(
           this._resizeConstraint.side,
           this._resizeConstraint.side);
+      console.log(this._resizeConstraint.side);
 
       // Получаем ImageData из области изначального изображения.
       var imageData = this._ctx.getImageData(

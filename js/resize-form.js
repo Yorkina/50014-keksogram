@@ -34,9 +34,6 @@
     resizeForm.classList.add('invisible');
     filterForm.classList.remove('invisible');
   };
-  resizeSize.addEventListener('change', function() {
-    resizer.setConstraint(resizer.getConstraint().x, resizer.getConstraint().y, parseInt(resizeSize.value, 10));
-  });
 
   var imgHeight = 0,
     imgWidth = 0;
@@ -45,8 +42,9 @@
   previewImage.addEventListener('load', function() {
 
   //получаем размеры каринки после загрузки
-    imgWidth = this.clientWidth;
-    imgHeight = this.clientHeight;
+    imgWidth = this.naturalWidth;
+    imgHeight = this.naturalHeight;
+    console.log(imgWidth, imgHeight);
 
 
 
@@ -83,19 +81,27 @@
     }
   });
 
+  resizeSize.addEventListener('change', function() {
+    resizer.setConstraint(
+      resizer.getConstraint().x - ((resizeSize.value - resizer.getConstraint().side) / 2),
+      resizer.getConstraint().y - ((resizeSize.value - resizer.getConstraint().side) / 2),
+      parseInt(resizeSize.value, 10));
+  });
+
+  window.addEventListener('pictureload', function() {
+    resizeSize.value = resizer.getConstraint().side;
+  });
+
   window.addEventListener('resizerchange', function() {
     var constraint = resizer.getConstraint();
-    var x = 0 > constraint.x ? 0 : undefined;
-    var y = 0 > constraint.y ? 0 : undefined;
-
-    if (x === undefined && imgWidth - constraint.x < constraint.side) {
-      x = imgWidth - constraint.side;
+    var x = 0 > constraint.x ? 0 : 'undefined';
+    var y = 0 > constraint.y ? 0 : 'undefined';
+    if (x === 'undefined' && imgWidth - constraint.x < constraint.side) {
+      x = imgWidth - constraint.x;
     }
-
-    if (y === undefined && imgHeight - constraint.y < constraint.side) {
-      y = imgHeight - constraint.side;
+    if (y === 'undefined' && imgHeight - constraint.y < constraint.side) {
+      y = imgHeight - constraint.y;
     }
-
   });
 
 })();
