@@ -9,18 +9,15 @@
     // Изображение, с которым будет вестись работа.
     this._image = new Image();
     this._image.src = image;
-
     // Холст.
     this._container = document.createElement('canvas');
     this._ctx = this._container.getContext('2d');
-
     // Создаем холст только после загрузки изображения.
     this._image.onload = function() {
       // Размер холста равен размеру загруженного изображения. Это нужно
       // для удобства работы с координатами.
       this._container.width = this._image.naturalWidth;
       this._container.height = this._image.naturalHeight;
-
       /**
        * Предлагаемый размер кадра в виде коэффициента относительно меньшей
        * стороны изображения.
@@ -42,6 +39,7 @@
 
       // Отрисовка изначального состояния канваса.
       this.redraw();
+      window.dispatchEvent(new CustomEvent('pictureload'));
     }.bind(this);
 
     // Фиксирование контекста обработчиков.
@@ -85,7 +83,6 @@
       // Сохранение состояния канваса.
       // Подробней см. строку 132.
       this._ctx.save();
-
       // Установка начальной точки системы координат в центр холста.
       this._ctx.translate(this._container.width / 2, this._container.height / 2);
 
@@ -99,7 +96,14 @@
       // Отрисовка прямоугольника, обозначающего область изображения после
       // кадрирования. Координаты задаются от центра.
       //
-
+      this._ctx.strokeStyle = '#FFE753';
+      this._ctx.lineWidth = 6;
+      this._ctx.setLineDash([15, 10]);
+      this._ctx.strokeRect(
+        -this._resizeConstraint.side / 2,
+        -this._resizeConstraint.side / 2,
+        this._resizeConstraint.side,
+        this._resizeConstraint.side);
       // Восстановление состояния канваса, которое было до вызова ctx.save
       // и последующего изменения системы координат. Нужно для того, чтобы
       // следующий кадр рисовался с привычной системой координат, где точка
@@ -252,6 +256,7 @@
       var imageToExport = new Image(
           this._resizeConstraint.side,
           this._resizeConstraint.side);
+      console.log(this._resizeConstraint.side);
 
       // Получаем ImageData из области изначального изображения.
       var imageData = this._ctx.getImageData(
