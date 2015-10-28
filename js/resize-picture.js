@@ -39,7 +39,6 @@
 
       // Отрисовка изначального состояния канваса.
       this.redraw();
-      window.dispatchEvent(new CustomEvent('pictureload'));
     }.bind(this);
 
     // Фиксирование контекста обработчиков.
@@ -256,7 +255,6 @@
       var imageToExport = new Image(
           this._resizeConstraint.side,
           this._resizeConstraint.side);
-      console.log(this._resizeConstraint.side);
 
       // Получаем ImageData из области изначального изображения.
       var imageData = this._ctx.getImageData(

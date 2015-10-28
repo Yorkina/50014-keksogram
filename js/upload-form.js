@@ -1,6 +1,7 @@
 'use strict';
 /* global
   Resizer: true
+  resizer: true
 */
 (function() {
   var uploadForm = document.forms['upload-select-image'];
