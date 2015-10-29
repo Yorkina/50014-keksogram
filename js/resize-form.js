@@ -43,8 +43,6 @@ define(function() {
   //получаем размеры каринки после загрузки
     imgWidth = this.naturalWidth;
     imgHeight = this.naturalHeight;
-    console.log(imgWidth, imgHeight);
-
 
 
   //находим максимальное значение стороны квадрата
@@ -52,6 +50,7 @@ define(function() {
     squareSize.max = Math.min(imgWidth, imgHeight);
     leftSize.max = imgWidth - squareSize.max;
     topSize.max = imgHeight - squareSize.max;
+    squareSize.value = Math.floor(squareSize.max * 0.75);
   });
 
   //находим максимальное значение отступа, если есть отступ слева
@@ -77,6 +76,7 @@ define(function() {
     if (squareSize.max > 1) {
       topSize.max = (imgHeight - squareSize.value);
       leftSize.max = (imgWidth - squareSize.value);
+      console.log(leftSize.max, topSize.max);
     }
   });
 

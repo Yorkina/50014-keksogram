@@ -1,7 +1,5 @@
 'use strict';
-/* global
-  PhotoModel: true
-*/
+
 
 define([
   'models/photo'

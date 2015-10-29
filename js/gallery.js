@@ -1,7 +1,5 @@
 'use strict';
-/* global
-  GalleryPicture: true
-*/
+
 define([
   'views/gallery-picture'
 ], function(GalleryPicture) {

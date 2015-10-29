@@ -1,6 +1,5 @@
 'use strict';
 /* global
-  Resizer: true
   resizer: true
 */
 define([

@@ -1,9 +1,5 @@
 'use strict';
-/* global
-  Gallery: true
-  PicturesCollection: true
-  PhotoView: true
-*/
+
 requirejs.config({
   baseUrl: 'js'
 });
@@ -115,17 +111,17 @@ define([
   function addFilterBackgroundColor() {
     var filterName = location.hash.match(REG_EXP) || 'popular';
     if (filterName[1]) {
-    switch (filterName[1]) {
-      case 'new':
-        filterNew.checked = true;
-        break;
-      case 'discussed':
-        filterDiscussed.checked = true;
-        break;
-      case 'popular':
-      default:
-        filterPopular.checked = true;
-        break;
+      switch (filterName[1]) {
+        case 'new':
+          filterNew.checked = true;
+          break;
+        case 'discussed':
+          filterDiscussed.checked = true;
+          break;
+        case 'popular':
+        default:
+          filterPopular.checked = true;
+          break;
       }
     }
   }

@@ -79,7 +79,6 @@ define(function() {
      */
     _onClick: function(evt) {
       evt.preventDefault();
-      console.log(evt.target);
       var clickedElement = evt.target.parentNode;
       if (clickedElement.classList.contains('picture') &&
         !clickedElement.classList.contains('picture-load-failure')) {
