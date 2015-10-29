@@ -23,6 +23,9 @@ define([
 
   var filtersContainer = document.querySelector('.filters');
   var picContainer = document.querySelector('.pictures');
+  var filterNew = document.querySelector('#filter-new');
+  var filterPopular = document.querySelector('#filter-popular');
+  var filterDiscussed = document.querySelector('#filter-discussed');
   /**
   * @const
   * @type {number}
@@ -41,7 +44,7 @@ define([
    * @type {number}
    */
   var currentPage = 0;
-  var REG_EXP = /^#filtersContainer\/(\S+)$/;
+  var REG_EXP = /^#filters\/(\S+)$/;
 
 
   filtersContainer.classList.add('hidden');
@@ -109,6 +112,24 @@ define([
   * @param  {string} filterValue
   * @return {Array}
   */
+  function addFilterBackgroundColor() {
+    var filterName = location.hash.match(REG_EXP) || 'popular';
+    if (filterName[1]) {
+    switch (filterName[1]) {
+      case 'new':
+        filterNew.checked = true;
+        break;
+      case 'discussed':
+        filterDiscussed.checked = true;
+        break;
+      case 'popular':
+      default:
+        filterPopular.checked = true;
+        break;
+      }
+    }
+  }
+
   function filterPic(filterValue) {
     var list = initiallyLoaded.slice(0);
     switch (filterValue) {
@@ -174,7 +195,7 @@ define([
   function initFilters() {
     filtersContainer.addEventListener('click', function(evt) {
       var clickedFilter = evt.target;
-      location.hash = 'filtersContainer/' + clickedFilter.value;
+      location.hash = 'filters/' + clickedFilter.value;
       clickedFilter.checked = true;
     });
   }
@@ -250,4 +271,5 @@ define([
 
 
   filtersContainer.classList.remove('hidden');
+  addFilterBackgroundColor();
 });
