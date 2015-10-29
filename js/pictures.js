@@ -4,7 +4,22 @@
   PicturesCollection: true
   PhotoView: true
 */
-(function() {
+requirejs.config({
+  baseUrl: 'js'
+});
+
+define([
+  'gallery',
+  'models/photo',
+  'models/pictures',
+  'views/photo',
+  'views/gallery-picture',
+  'logo-background',
+  'upload-form',
+  'filter-form',
+  'resize-form',
+  'resize-picture'
+], function(Gallery, PhotoModel, PicturesCollection, PhotoView, GalleryPicture) {
 
   var filtersContainer = document.querySelector('.filters');
   var picContainer = document.querySelector('.pictures');
@@ -26,9 +41,19 @@
    * @type {number}
    */
   var currentPage = 0;
+  var REG_EXP = /^#filtersContainer\/(\S+)$/;
 
 
   filtersContainer.classList.add('hidden');
+
+  function parseURL() {
+    var stringHash = location.hash;
+    var filterName = stringHash.match(REG_EXP);
+    if (filterName) {
+      setActiveFilter(filterName[1] || 'popular');
+    }
+  }
+
 
 
   function showPicFailure() {
@@ -144,17 +169,13 @@
     }
 
     picturesCollection.reset(list);
-    localStorage.setItem('filterValue', filterValue);
   }
 
   function initFilters() {
-    //ищем контейнер, в котором лежат фильтры(NB! - уже есть переменная filter)
-    //filtersContainer = document.querySelector('.filters');
-
     filtersContainer.addEventListener('click', function(evt) {
-      //в перменную записываем кликнутый элемент (эта информация содержится в объекте event)
       var clickedFilter = evt.target;
-      setActiveFilter(clickedFilter.value);
+      location.hash = 'filtersContainer/' + clickedFilter.value;
+      clickedFilter.checked = true;
     });
   }
   //функция установки фильтра
@@ -214,13 +235,19 @@
    */
   picturesCollection.fetch({ timeout: IMAGE_FAILURE_TIMEOUT }).success(function(loaded, state, jqXHR) {
     initiallyLoaded = jqXHR.responseJSON;
+
+    window.addEventListener('hashchange', function() {
+      parseURL();
+    });
+
     initFilters();
     initScroll();
+    parseURL();
 
-    setActiveFilter(localStorage.getItem('filterValue') || 'popular');
   }).fail(function() {
     showPicFailure();
   });
 
+
   filtersContainer.classList.remove('hidden');
-})();
+});

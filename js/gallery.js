@@ -2,7 +2,9 @@
 /* global
   GalleryPicture: true
 */
-(function() {
+define([
+  'views/gallery-picture'
+], function(GalleryPicture) {
   /**
    * Список констант кодов нажатых клавиш для обработки
    * клавиатурных событий.
@@ -141,6 +143,6 @@
 
 
 
-  window.Gallery = Gallery;
+  return Gallery;
 
-})();
+});

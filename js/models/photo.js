@@ -1,6 +1,6 @@
 'use strict';
 
-(function() {
+define(function() {
   var PhotoModel = Backbone.Model.extend({
     initialize: function() {
       this.set('liked', false);
@@ -14,6 +14,6 @@
     }
   });
 
-  window.PhotoModel = PhotoModel;
+  return PhotoModel;
 
-})();
+});

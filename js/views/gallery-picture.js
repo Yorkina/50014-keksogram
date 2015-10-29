@@ -1,6 +1,6 @@
 'use strict';
 
-(function() {
+define(function() {
 
   var GalleryPicture = Backbone.View.extend({
     tagName: 'img',
@@ -10,6 +10,6 @@
     }
   });
 
-  window.GalleryPicture = GalleryPicture;
+  return GalleryPicture;
 
-})();
+});
