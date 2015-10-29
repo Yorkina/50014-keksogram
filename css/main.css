@@ -342,7 +342,6 @@ input[type=radio]:checked + .upload-filter-label {
 }
 
 .picture-stat:before {
-  background: url('../img/image-icons-sprite.png') no-repeat 0 0;
   content: '';
   display: inline-block;
   margin: 0 2px;
@@ -352,15 +351,23 @@ input[type=radio]:checked + .upload-filter-label {
 }
 
 .picture-comments:before {
+  background: url('../img/image-icons-sprite.png') no-repeat 0 0;
   background-position: 0 0;
   height: 16px;
   width: 20px;
 }
 
 .picture-likes:before {
-  background-position: -21px 0;
+  background: url('../img/icon-heart-sprite.gif') no-repeat 0 0;
+  background-position: -18px 0;
   height: 15px;
   width: 19px;
+}
+.picture-likes-liked {
+  outline: 2px solid red;
+}
+.picture-likes-liked:before {
+background-position-x: 0px;
 }
 
 @media (min-width: 1380px) {
@@ -440,7 +447,7 @@ input[type=radio]:checked + .upload-filter-label {
 }
 
 .likes-count {
-  cursor: pointre;
+  cursor: pointer;
 }
 
 .likes-count:before {

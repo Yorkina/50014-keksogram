@@ -13,7 +13,6 @@
   var previewImage = document.querySelector('.resize-image-preview');
 
 
-  var resizeSize = resizeForm['size'];
   var prevButton = resizeForm['resize-prev'];
 
   prevButton.onclick = function(evt) {
@@ -82,11 +81,11 @@
   });
 
 
-    resizeSize.addEventListener('change', function() {
+  squareSize.addEventListener('change', function() {
     resizer.setConstraint(
-      resizer.getConstraint().x - ((resizeSize.value - resizer.getConstraint().side) / 2),
-      resizer.getConstraint().y - ((resizeSize.value - resizer.getConstraint().side) / 2),
-      parseInt(resizeSize.value, 10));
+      resizer.getConstraint().x - ((squareSize.value - resizer.getConstraint().side) / 2),
+      resizer.getConstraint().y - ((squareSize.value - resizer.getConstraint().side) / 2),
+      parseInt(squareSize.value, 10));
   });
 
 
@@ -95,6 +94,7 @@
     var x = 0 > constraint.x ? 0 : undefined;
     var y = 0 > constraint.y ? 0 : undefined;
     var side = squareSize.max > constraint.side ? constraint.side : squareSize.max;
+
     if (x === undefined && imgWidth - constraint.x < constraint.side) {
       x = imgWidth - constraint.side;
     }
@@ -106,6 +106,10 @@
     if (x !== undefined || y !== undefined) {
       constraint.side = side;
       resizer.setConstraint(x, y, constraint.side);
+    }
+
+    if (x !== undefined || y !== undefined && squareSize.max < squareSize.value) {
+      constraint.side = Math.min(squareSize.value, squareSize.max);
     }
 
   });
