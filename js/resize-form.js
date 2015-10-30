@@ -76,16 +76,19 @@ define(function() {
     if (squareSize.max > 1) {
       topSize.max = (imgHeight - squareSize.value);
       leftSize.max = (imgWidth - squareSize.value);
-      console.log(leftSize.max, topSize.max);
     }
   });
 
 
   squareSize.addEventListener('change', function() {
-    resizer.setConstraint(
-      resizer.getConstraint().x - ((squareSize.value - resizer.getConstraint().side) / 2),
-      resizer.getConstraint().y - ((squareSize.value - resizer.getConstraint().side) / 2),
-      parseInt(squareSize.value, 10));
+    if (squareSize.value) {
+      resizer.setConstraint(
+        resizer.getConstraint().x - ((squareSize.value - resizer.getConstraint().side) / 2),
+        resizer.getConstraint().y - ((squareSize.value - resizer.getConstraint().side) / 2),
+        parseInt(squareSize.value, 10));
+    } else {
+      squareSize.value = 0;
+    }
   });
 
 

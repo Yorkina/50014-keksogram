@@ -7,6 +7,7 @@ define([
 ], function(Resizer) {
   var uploadForm = document.forms['upload-select-image'];
   var resizeForm = document.forms['upload-resize'];
+  var filterForm = document.forms['upload-filter'];
 
   var fileElement = uploadForm['upload-file'];
 
@@ -33,6 +34,7 @@ define([
     uploadImage(fileElement, function(image) {
       sessionStorage.setItem('uploaded-image', image);
       resizeForm.querySelector('.resize-image-preview').src = image;
+      filterForm.querySelector('.filter-image-preview').src = image;
 
       resizer = new Resizer(image);
       resizer.setElement(resizeForm);
