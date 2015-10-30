@@ -16,7 +16,9 @@ define([
   'resize-form',
   'resize-picture'
 ], function(Gallery, PhotoModel, PicturesCollection, PhotoView, GalleryPicture) {
-
+  /**
+   * @type {Element}
+   */
   var filtersContainer = document.querySelector('.filters');
   var picContainer = document.querySelector('.pictures');
   var filterNew = document.querySelector('#filter-new');

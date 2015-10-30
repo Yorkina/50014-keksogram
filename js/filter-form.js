@@ -1,6 +1,9 @@
 'use strict';
 
 (function() {
+  /**
+   * @type {Element}
+   */
   var uploadForm = document.forms['upload-select-image'];
   var resizeForm = document.forms['upload-resize'];
   var filterForm = document.forms['upload-filter'];
@@ -10,7 +13,9 @@
   var selectedFilter = filterForm['upload-filter'];
 
   var filterMap;
-
+  /**
+   * Устанавливает текущий фильтр на загруженную картинку
+   */
   function setFilter() {
     if (!filterMap) {
       filterMap = {
@@ -28,7 +33,10 @@
       setFilter();
     };
   }
-
+   /**
+   * Обработчик события клика
+   * @param {MouseEvent} evt
+   */
   prevButton.onclick = function(evt) {
     evt.preventDefault();
 
@@ -47,7 +55,9 @@
   });
   setFilter();
 
-
+  /**
+   * Устанавливает выбранный из куков фильтр
+   */
   var restoreCookies = function() {
 
     if (docCookies.hasItem('upload-filter')) {

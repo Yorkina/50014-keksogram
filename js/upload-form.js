@@ -5,12 +5,19 @@
 define([
   'resize-picture'
 ], function(Resizer) {
+  /**
+   * @type {Element}
+   */
   var uploadForm = document.forms['upload-select-image'];
   var resizeForm = document.forms['upload-resize'];
   var filterForm = document.forms['upload-filter'];
 
   var fileElement = uploadForm['upload-file'];
 
+ /**
+   * @param {Element}
+   * @callback
+   */
   function uploadImage(element, callback) {
     var fileReader = new FileReader();
     fileReader.onload = function(evt) {
@@ -21,13 +28,17 @@ define([
 
     fileReader.readAsDataURL(element.files[0]);
   }
-
+ /** Обработчик события изменения в форме загрузки,
+   * считывает наличие загруженной картинки
+   */
   fileElement.onchange = function() {
     if (fileElement.value) {
       fileElement.classList.add('upload-input-hasvalue');
     }
   };
-
+  /** Обработчик события загрузки картинки
+   *  @param {Event} evt
+   */
   uploadForm.onsubmit = function(evt) {
     evt.preventDefault();
 

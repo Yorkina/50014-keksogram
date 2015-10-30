@@ -14,7 +14,10 @@ define(function() {
 
 
   var prevButton = resizeForm['resize-prev'];
-
+  /**
+   * Обработчик кликов по элементу.
+   * @param {MouseEvent} evt
+   */
   prevButton.onclick = function(evt) {
     evt.preventDefault();
 
@@ -24,6 +27,10 @@ define(function() {
     uploadForm.classList.remove('invisible');
   };
 
+ /**
+   * Обработчик события отправки формы
+   *  @param {Event} evt
+   */
   resizeForm.onsubmit = function(evt) {
     evt.preventDefault();
     if (filterForm.querySelector('.filter-image-preview').src === '') {
@@ -78,7 +85,6 @@ define(function() {
       leftSize.max = (imgWidth - squareSize.value);
     }
   });
-
 
   squareSize.addEventListener('change', function() {
     if (squareSize.value) {
