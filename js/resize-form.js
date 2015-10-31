@@ -65,7 +65,7 @@ define(function() {
     if (!squareSize.value) {
       this.max = squareSize.max - squareSize.min;
     } else {
-      this.max = imgWidth - squareSize.value;
+      this.max = imgWidth - parseInt(squareSize.value, 10);
     }
   });
 
@@ -74,23 +74,23 @@ define(function() {
     if (!squareSize.value) {
       this.max = squareSize.max - squareSize.min;
     } else {
-      this.max = imgHeight - squareSize.value;
+      this.max = imgHeight - parseInt(squareSize.value, 10);
     }
   });
 
   //пересчитваем поля отступов, если ввели вручную размер и хотим с ним жить
   squareSize.addEventListener('change', function() {
     if (squareSize.max > 1) {
-      topSize.max = (imgHeight - squareSize.value);
-      leftSize.max = (imgWidth - squareSize.value);
+      topSize.max = (imgHeight - parseInt(squareSize.value, 10));
+      leftSize.max = (imgWidth - parseInt(squareSize.value, 10));
     }
   });
 
   squareSize.addEventListener('change', function() {
     if (squareSize.value) {
       resizer.setConstraint(
-        resizer.getConstraint().x - ((squareSize.value - resizer.getConstraint().side) / 2),
-        resizer.getConstraint().y - ((squareSize.value - resizer.getConstraint().side) / 2),
+        resizer.getConstraint().x - ((parseInt(squareSize.value, 10) - resizer.getConstraint().side) / 2),
+        resizer.getConstraint().y - ((parseInt(squareSize.value, 10) - resizer.getConstraint().side) / 2),
         parseInt(squareSize.value, 10));
     } else {
       squareSize.value = 0;
@@ -100,25 +100,25 @@ define(function() {
 
   window.addEventListener('resizerchange', function() {
     var constraint = resizer.getConstraint();
-    var x = 0 > constraint.x ? 0 : undefined;
-    var y = 0 > constraint.y ? 0 : undefined;
-    var side = squareSize.max > constraint.side ? constraint.side : squareSize.max;
+    //var x = constraint.x > 0 ? undefined : 0;
+    //var y = constraint.y > 0 ? undefined : 0;
+    //var side = squareSize.max > constraint.side ? constraint.side : squareSize.max;
 
-    if (x === undefined && imgWidth - constraint.x < constraint.side) {
+    if ((typeof x === 'undefined') && (imgWidth - constraint.x < constraint.side)) {
       x = imgWidth - constraint.side;
     }
 
-    if (y === undefined && imgHeight - constraint.y < constraint.side) {
+    if ((typeof y === 'undefined') && (imgHeight - constraint.y < constraint.side)) {
       y = imgHeight - constraint.side;
     }
 
-    if (x !== undefined || y !== undefined) {
+    if ((typeof x !== 'undefined') || (typeof y !== 'undefined')) {
       constraint.side = side;
       resizer.setConstraint(x, y, constraint.side);
     }
 
-    if (x !== undefined || y !== undefined && squareSize.max < squareSize.value) {
-      constraint.side = Math.min(squareSize.value, squareSize.max);
+    if ((typeof x !== 'undefined') || (typeof y !== 'undefined') && (squareSize.max < parseInt(squareSize.value, 10))) {
+      constraint.side = Math.min(parseInt(squareSize.value, 10), squareSize.max);
     }
 
   });
