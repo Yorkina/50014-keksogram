@@ -15,7 +15,7 @@ define([
   'filter-form',
   'resize-form',
   'resize-picture'
-], function(Gallery, PhotoModel, PicturesCollection, PhotoView, GalleryPicture) {
+], function(Gallery, PhotoModel, PicturesCollection, PhotoView) {
   /**
    * @type {Element}
    */

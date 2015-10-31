@@ -1,6 +1,7 @@
 'use strict';
 /* global
   resizer: true
+
 */
 
 define(function() {
@@ -100,9 +101,9 @@ define(function() {
 
   window.addEventListener('resizerchange', function() {
     var constraint = resizer.getConstraint();
-    //var x = constraint.x > 0 ? undefined : 0;
-    //var y = constraint.y > 0 ? undefined : 0;
-    //var side = squareSize.max > constraint.side ? constraint.side : squareSize.max;
+    var x = constraint.x > 0 ? undefined : 0;
+    var y = constraint.y > 0 ? undefined : 0;
+    var side = squareSize.max > constraint.side ? constraint.side : squareSize.max;
 
     if ((typeof x === 'undefined') && (imgWidth - constraint.x < constraint.side)) {
       x = imgWidth - constraint.side;
