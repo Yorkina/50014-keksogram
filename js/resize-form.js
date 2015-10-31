@@ -34,9 +34,9 @@ define(function() {
    */
   resizeForm.onsubmit = function(evt) {
     evt.preventDefault();
-    if (filterForm.querySelector('.filter-image-preview').src === '') {
-      filterForm.querySelector('.filter-image-preview').src = resizer.exportImage().src;
-    }
+     filterForm.elements['filter-image-src'].src = resizer.exportImage().src;
+    document.querySelector('.filter-image-preview').src = resizer.exportImage().src;
+
 
     resizeForm.classList.add('invisible');
     filterForm.classList.remove('invisible');
